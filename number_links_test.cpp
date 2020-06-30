@@ -169,7 +169,7 @@ int main(int argc, char **argv) {
     for (int i = 0; i < kl_sizes.size(); ++i) {
         vector< vector<uint32_t>> kl_cut = CutKL_brute(kl, kl_sizes[i], n);
         string graph_name = "knn_kl_llf_" + to_string(kl_sizes[i]);
-	    get_synthetic_tests(n, d, n_q, n_tr, random_gen, knn, kl, db, queries, truth, output_txt, &ll2, graph_name, true, true, false, false);
+	    get_synthetic_tests(n, d, n_q, n_tr, random_gen, knn, kl_cut, db, queries, truth, output_txt, &ll2, graph_name, true, true, false, false);
     }
 
     return 0;
