@@ -44,20 +44,21 @@ int main(int argc, char **argv) {
     const size_t kl_size = 15; // KL graph size
 
     size_t knn_size = 100;
-    float knn_thr = 1.25;
+    float knn_angle = 1.25;
     if (d == 3) {
         knn_size = 20;
-        knn_thr = 1.8;
+        knn_angle = 1.8;
     } else if (d == 5) {
         knn_size = 60;
-        knn_thr = 1.8;
+        knn_angle = 1.8;
     } else if (d == 9) {
         knn_size = 300;
-        knn_thr = 1.6;
+        knn_angle = 1.6;
     } else if (d == 17) {
         knn_size = 2000;
-        knn_thr = 1.25;
+        knn_angle = 1.25;
     }
+    float knn_thr = asin(knn_angle * pow(2, 0.5) * pow(n, - 1. / d));
 
     CosMetric cos = CosMetric();
 //    LikeL2Metric ll2 = LikeL2Metric();
@@ -144,11 +145,7 @@ int main(int argc, char **argv) {
     }
 
 
-//--------------------------------------------------------------------------------------------------------------------------------------------
-
 // BUILD GRAPHS
-
-
     bool knn_exist = FileExist(dir_knn);
     if (knn_exist != true) {
         time(&start);
