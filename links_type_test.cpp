@@ -217,8 +217,6 @@ int main(int argc, char **argv) {
 	get_synthetic_tests(n, d, n_q, n_tr, random_gen, knn, kl_numb, db, queries, truth, output_txt, &ll2, "knn_kl_numb_llf", true, true, false, false);
 	get_synthetic_tests(n, d, n_q, n_tr, random_gen, knn, kl_sqrt, db, queries, truth, output_txt, &ll2, "knn_kl_sqrt_llf", true, true, false, false);
 
-
-
     return 0;
 
 }
