@@ -78,7 +78,7 @@ int main(int argc, char **argv) {
     const char *edge_knn_dir = dir_knn.c_str();
 
 
-    string dir_kl = path_models + "kl_sqrt_style_n_10_6_d_" + to_string(d) + ".ivecs";
+    string dir_kl = path_models + "kl_sqrt_style_n_10_6_d_" + to_string(d) + "_nlt.ivecs";
     const char *edge_kl_dir = dir_kl.c_str();
 
 
