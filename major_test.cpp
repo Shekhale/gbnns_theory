@@ -29,10 +29,12 @@ using  namespace std;
 int main(int argc, char **argv) {
 
     size_t d_v = 3;
-    if (argc > 1) {
+    if (argc == 2) {
         d_v = atoi(argv[1]);
+    } else {
+        cout << " Need to specify parameters" << endl;
+        return 1;
     }
-
 
     time_t start, end;
     const size_t n = 1000000;  // number of points in base set
@@ -56,34 +58,34 @@ int main(int argc, char **argv) {
         knn_size = 2000;
     }
 
-    const size_t n_neig = knn_size;
-
     LikeL2Metric ll2 = LikeL2Metric();
 
-    cout << "d = " << d << ", kl_size = " << kl_size << ", n_neig = " << n_neig <<  endl;
+    cout << "d = " << d << ", kl_size = " << kl_size << ", knn_size = " << knn_size <<  endl;
 
     std::mt19937 random_gen;
     std::random_device device;
     random_gen.seed(device());
 
+    string path_data = "data/synthetic/synthetic";
+    string path_models = "models/synthetic/";
 
-    string dir_d = string("data/synthetic/synthetic_database_n_10_6_d_") + to_string(d) + string(".fvecs");
+    string dir_d = path_data + "_database_n_10_6_d_" + to_string(d) + ".fvecs";
     const char *database_dir = dir_d.c_str();  // path to data
-    string dir_q = string("data/synthetic/synthetic_query_n_10_4_d_") + to_string(d) + string(".fvecs");
+    string dir_q = path_data + "_query_n_10_4_d_" + to_string(d) + ".fvecs";
     const char *query_dir = dir_q.c_str();  // path to data
-    string dir_t = string("data/synthetic/synthetic_groundtruth_n_10_4_d_") + to_string(d) + string(".ivecs");
+    string dir_t = path_data + "_groundtruth_n_10_4_d_" + to_string(d) + ".ivecs";
     const char *truth_dir = dir_t.c_str();  // path to data
 
 
-    string dir_knn = string("models/synthetic/knn_n_10_6_d_") + to_string(d) + string(".ivecs");
+    string dir_knn = path_models + "knn_n_10_6_d_" + to_string(d) + ".ivecs";
     const char *edge_knn_dir = dir_knn.c_str();
 
 
-    string dir_kl = string("models/synthetic/kl_sqrt_style_n_10_6_d_") + to_string(d) + string(".ivecs");
+    string dir_kl = path_models + "kl_sqrt_style_n_10_6_d_" + to_string(d) + ".ivecs";
     const char *edge_kl_dir = dir_kl.c_str();
 
 
-    string output = string("results/synthetic_n_10_6_d_") + to_string(d) + string(".txt");
+    string output = "results/synthetic_n_10_6_d_" + to_string(d) + ".txt";
     const char *output_txt = output.c_str();
 
     remove(output_txt);
@@ -143,7 +145,7 @@ int main(int argc, char **argv) {
     if (knn_exist != true) {
         time(&start);
         ExactKNN knn;
-        knn.Build(n_neig, db, n, d, &ll2);
+        knn.Build(knn_size, db, n, d, &ll2);
         cout << knn.matrixNN[0].size() << ' ' << knn.matrixNN[3].size() << endl;
         time(&end);
         cout << difftime(end, start) << endl;
@@ -174,11 +176,11 @@ int main(int argc, char **argv) {
     cout << "kl " << FindGraphAverageDegree(kl) << endl;
 
 
-	get_synthetic_tests(n, d, n_q, n_tr, random_gen, knn, knn, db, queries, truth, output_txt, &ll2, "knn", false, false, false);
-	get_synthetic_tests(n, d, n_q, n_tr, random_gen, knn, kl, db, queries, truth, output_txt, &ll2, "knn_kl", true, false, false);
-	get_synthetic_tests(n, d, n_q, n_tr, random_gen, knn, kl, db, queries, truth, output_txt, &ll2, "knn_kl_llf", true, true, false);
-	get_synthetic_tests(n, d, n_q, n_tr, random_gen, knn_for_beam, knn_for_beam, db, queries, truth, output_txt, &ll2, "knn_beam", false, false, true);
-	get_synthetic_tests(n, d, n_q, n_tr, random_gen, knn_for_beam, kl, db, queries, truth, output_txt, &ll2, "knn_beam_kl_llf", true, true, true);
+	get_synthetic_tests(n, d, n_q, n_tr, random_gen, knn, knn, db, queries, truth, output_txt, &ll2, "knn", false, false, false, false);
+	get_synthetic_tests(n, d, n_q, n_tr, random_gen, knn, kl, db, queries, truth, output_txt, &ll2, "knn_kl", true, false, false, false);
+	get_synthetic_tests(n, d, n_q, n_tr, random_gen, knn, kl, db, queries, truth, output_txt, &ll2, "knn_kl_llf", true, true, false, false);
+	get_synthetic_tests(n, d, n_q, n_tr, random_gen, knn_for_beam, knn_for_beam, db, queries, truth, output_txt, &ll2, "knn_beam", false, false, true, false);
+	get_synthetic_tests(n, d, n_q, n_tr, random_gen, knn_for_beam, kl, db, queries, truth, output_txt, &ll2, "knn_beam_kl_llf", true, true, true, false);
 
 
 

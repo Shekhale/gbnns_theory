@@ -56,6 +56,21 @@ public:
     }
 };
 
+class CosMetric : public Metric {
+public:
+    float Dist(const float *x, const float *y, size_t d) {
+        float cos = 0;
+        for (int i = 0; i < d; ++i) {
+            cos += *x * *y;
+            ++x;
+            ++y;
+        }
+        if (abs(cos - 1) < EPS ) { cos = 1;}
+        if (abs(cos + 1) < EPS ) { cos = -1;}
+        float res = acos(cos);
+        return res;
+    }
+};
 
 template<typename T>
 void readXvec(std::ifstream &in, T *data, const size_t d, const size_t n = 1)

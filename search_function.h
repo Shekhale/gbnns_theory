@@ -231,7 +231,8 @@ void get_one_test(vector<vector<uint32_t> > &knn_graph, vector<vector<uint32_t> 
 void get_synthetic_tests(int n, int d, int n_q, int n_tr, std::mt19937 random_gen,
                 vector< vector<uint32_t> > &knn, vector< vector<uint32_t> > &kl, vector<float> &db,
                 vector<float> &queries, vector<uint32_t> &truth, const char* output_txt,
-                Metric *metric, string graph_name, bool use_second_graph, bool llf, bool beam_search) {
+                Metric *metric, string graph_name, bool use_second_graph, bool llf, bool beam_search,
+                bool knn_by_threshold) {
 
     vector<vector<uint32_t> > inter_points(n_q);
     int num = 0;
@@ -244,6 +245,7 @@ void get_synthetic_tests(int n, int d, int n_q, int n_tr, std::mt19937 random_ge
 
     vector<int> ef_coeff;
     vector<int> k_coeff;
+    vector<int> thr_coeff;
     uint32_t hops_bound = 11;
     int recheck_size = -1;
     int knn_size = FindGraphAverageDegree(knn);
@@ -263,6 +265,8 @@ void get_synthetic_tests(int n, int d, int n_q, int n_tr, std::mt19937 random_ge
         } else {
             vector<int> k_coeff_{12, 14, 16, 18, 20};
             k_coeff.insert(k_coeff.end(), k_coeff_.begin(), k_coeff_.end());
+            vector<int> thr_coeff_{1.1, 1.2, 1.3, 1.4, 1.5};
+            thr_coeff.insert(thr_coeff.end(), thr_coeff_.begin(), thr_coeff_.end());
         }
         hops_bound = 11;
     } else if (d == 5) {
@@ -272,6 +276,8 @@ void get_synthetic_tests(int n, int d, int n_q, int n_tr, std::mt19937 random_ge
         } else {
             vector<int> k_coeff_{15, 20, 25, 30, 40, 60};
             k_coeff.insert(k_coeff.end(), k_coeff_.begin(), k_coeff_.end());
+            vector<int> thr_coeff_{1.1, 1.15, 1.2, 1.3, 1.4, 1.5};
+            thr_coeff.insert(thr_coeff.end(), thr_coeff_.begin(), thr_coeff_.end());
         }
         hops_bound = 7;
     } else if (d == 9) {
@@ -281,6 +287,8 @@ void get_synthetic_tests(int n, int d, int n_q, int n_tr, std::mt19937 random_ge
         } else {
             vector<int> k_coeff_{60, 100, 150, 200, 250, 300};
             k_coeff.insert(k_coeff.end(), k_coeff_.begin(), k_coeff_.end());
+            vector<int> thr_coeff_{1.25, 1.3, 1.35, 1.4, 1.45, 1.5};
+            thr_coeff.insert(thr_coeff.end(), thr_coeff_.begin(), thr_coeff_.end());
         }
         hops_bound = 5;
     } else if (d == 17) {
@@ -290,6 +298,8 @@ void get_synthetic_tests(int n, int d, int n_q, int n_tr, std::mt19937 random_ge
         } else {
             vector<int> k_coeff_{750, 1000, 1250, 1500, 1750, 2000};
             k_coeff.insert(k_coeff.end(), k_coeff_.begin(), k_coeff_.end());
+            vector<int> thr_coeff_{1.1, 1.15, 1.17, 1.19, 1.21, 1.22};
+            thr_coeff.insert(thr_coeff.end(), thr_coeff_.begin(), thr_coeff_.end());
         }
         hops_bound = 4;
     }
@@ -297,13 +307,17 @@ void get_synthetic_tests(int n, int d, int n_q, int n_tr, std::mt19937 random_ge
     int exp_size = min(ef_coeff.size(), k_coeff.size());
 
     for (int i=0; i < exp_size; ++i) {
+        vector< vector <uint32_t>> knn_cur;
+        if (beam_search) {
+            knn_cur = knn;
+        } else if (knn_by_threshold) {
+            knn_cur = CutKNNbyThreshold(knn, db, thr_coeff[i], n, d, metric);
+        } else {
+            knn_cur = CutKNNbyK(knn, db, k_coeff[i], n, d, metric);
+        }
 
-        vector< vector <uint32_t>> knn_cur = CutKNNbyK(knn, db, k_coeff[i], n, d, metric);
-
-//        cout << "ef = " << ef_coeff[i] << ", recheck = " << recheck_size << endl;
         get_one_test(knn_cur, kl, db, queries, db, queries, truth, n, d, d, n_q, n_tr, ef_coeff[i], 1,
                      graph_name, metric, output_txt, inter_points, use_second_graph, llf, hops_bound, 0, recheck_size, 1, omp_get_max_threads());
     }
 
 }
-
