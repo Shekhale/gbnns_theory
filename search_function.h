@@ -311,7 +311,8 @@ void get_synthetic_tests(int n, int d, int n_q, int n_tr, std::mt19937 random_ge
         if (beam_search) {
             knn_cur = knn;
         } else if (knn_by_threshold) {
-            knn_cur = CutKNNbyThreshold(knn, db, thr_coeff[i], n, d, metric);
+            float thr = asin(thr_coeff[i] * pow(2, 0.5) * pow(n, - 1. / d));
+            knn_cur = CutKNNbyThreshold(knn, db, thr, n, d, metric);
         } else {
             knn_cur = CutKNNbyK(knn, db, k_coeff[i], n, d, metric);
         }
