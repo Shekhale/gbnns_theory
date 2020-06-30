@@ -156,6 +156,7 @@ int main(int argc, char **argv) {
         cout << difftime(end, start) << endl;
         write_edges(edge_knn_dir, knn.matrixNN);
     }
+
     bool knn_thr_exist = FileExist(dir_knn_thr);
     if (knn_thr_exist != true) {
         time(&start);
@@ -190,7 +191,7 @@ int main(int argc, char **argv) {
 		kl_n.BuildByNumber(kl_size, db, n, d, random_gen, &cos);
 		time (&end);
 		cout << difftime(end, start) << endl;
-        write_edges(edge_kl_numb_dir, kl_sqrt.longmatrixNN);
+        write_edges(edge_kl_numb_dir, kl_n.longmatrixNN);
 
         time(&start);
 		KLgraph kl_dist;
