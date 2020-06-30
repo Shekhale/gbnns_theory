@@ -313,10 +313,12 @@ void get_synthetic_tests(int n, int d, int n_q, int n_tr, std::mt19937 random_ge
         } else if (knn_by_threshold) {
             float thr = asin(thr_coeff[i] * pow(2, 0.5) * pow(n, - 1. / d));
             knn_cur = CutKNNbyThreshold(knn, db, thr, n, d, metric);
+            cout << "threshold" << endl;
         } else {
             knn_cur = CutKNNbyK(knn, db, k_coeff[i], n, d, metric);
         }
 
+        cout << "knn_cur  " << FindGraphAverageDegree(knn_cur) << endl;
         get_one_test(knn_cur, kl, db, queries, db, queries, truth, n, d, d, n_q, n_tr, ef_coeff[i], 1,
                      graph_name, metric, output_txt, inter_points, use_second_graph, llf, hops_bound, 0, recheck_size, 1, omp_get_max_threads());
     }
