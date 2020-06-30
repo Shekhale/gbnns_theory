@@ -224,7 +224,25 @@ vector< vector <uint32_t>> CutKNNbyK(vector< vector <uint32_t>> &knn, vector<flo
 }
 
 
-vector< vector <uint32_t>> CutKL(vector< vector <uint32_t>> &kl, int l, int N, vector< vector <uint32_t>> &knn) {
+vector< vector <uint32_t>> CutKL_brute(vector< vector <uint32_t>> &kl, int l, int N) {
+    vector< vector <uint32_t>> kl_cut(N);
+    #pragma omp parallel for
+    for (int i=0; i < N; ++i) {
+        if (l > kl[i].size()) {
+            cout << "Graph have less edges that you want" << endl;
+            exit(1);
+        }
+        vector <uint32_t> kl_sh = kl[i];
+        random_shuffle(kl_sh.begin(), kl_sh.end());
+        for (int j = 0; j < l; ++j) {
+            kl_cut[i].push_back(kl_sh[j]);
+        }
+    }
+    return  kl_cut;
+}
+
+
+vector< vector <uint32_t>> CutKL_smart(vector< vector <uint32_t>> &kl, int l, int N, vector< vector <uint32_t>> &knn) {
     vector< vector <uint32_t>> kl_cut(N);
     #pragma omp parallel for
     for (int i=0; i < N; ++i) {
