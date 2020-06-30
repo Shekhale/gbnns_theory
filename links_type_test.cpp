@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
         knn_thr = 1.25;
     }
 
-    CosMetric ll2 = CosMetric();
+    CosMetric cos = CosMetric();
 //    LikeL2Metric ll2 = LikeL2Metric();
 
     cout << "d = " << d << ", kl_size = " << kl_size << ", knn_size = " << knn_size << ", knn_thr = " << knn_thr <<  endl;
@@ -111,7 +111,7 @@ int main(int argc, char **argv) {
         for (int i=0; i < n*d; ++i) {
             db.push_back(data[n_q*d + i]);
         }
-        vector<uint32_t> truth = get_truth(db, queries, n, d, n_q, &ll2);
+        vector<uint32_t> truth = get_truth(db, queries, n, d, n_q, &cos);
 
         std::ofstream data_input_db(database_dir, std::ios::binary);
         writeXvec<float>(data_input_db, db.data(), d, n);
@@ -153,7 +153,7 @@ int main(int argc, char **argv) {
     if (knn_exist != true) {
         time(&start);
         ExactKNN knn;
-        knn.Build(knn_size, db, n, d, &ll2);
+        knn.Build(knn_size, db, n, d, &cos);
         cout << knn.matrixNN[0].size() << ' ' << knn.matrixNN[3].size() << endl;
         time(&end);
         cout << difftime(end, start) << endl;
@@ -163,7 +163,7 @@ int main(int argc, char **argv) {
     if (knn_exist != true) {
         time(&start);
         ExactKNN knn_by_thr;
-        knn_by_thr.BuildThreshold(knn_thr, db, n, d, &ll2);
+        knn_by_thr.BuildThreshold(knn_thr, db, n, d, &cos);
         cout << knn_by_thr.matrixNN[0].size() << ' ' << knn_by_thr.matrixNN[3].size() << endl;
         time(&end);
         cout << difftime(end, start) << endl;
@@ -173,7 +173,7 @@ int main(int argc, char **argv) {
     vector< vector <uint32_t>> knn(n);
     knn = load_edges(edge_knn_dir, knn);
     cout << "knn " << FindGraphAverageDegree(knn) << endl;
-    knn = CutKNNbyK(knn, db, knn_size, n, d, &ll2);
+    knn = CutKNNbyK(knn, db, knn_size, n, d, &cos);
     cout << "knn " << FindGraphAverageDegree(knn) << endl;
 
     vector< vector <uint32_t>> knn_by_thr(n);
@@ -183,21 +183,21 @@ int main(int argc, char **argv) {
     if (kl_exist != true) {
         time(&start);
 		KLgraph kl_sqrt;
-		kl_sqrt.BuildByNumberCustom(kl_size, db, n, d, pow(n, 0.5), random_gen, &ll2);
+		kl_sqrt.BuildByNumberCustom(kl_size, db, n, d, pow(n, 0.5), random_gen, &cos);
 		time (&end);
 		cout << difftime(end, start) << endl;
         write_edges(edge_kl_sqrt_dir, kl_sqrt.longmatrixNN);
 
         time(&start);
 		KLgraph kl_n;
-		kl_n.BuildByNumber(kl_size, db, n, d, random_gen, &ll2);
+		kl_n.BuildByNumber(kl_size, db, n, d, random_gen, &cos);
 		time (&end);
 		cout << difftime(end, start) << endl;
         write_edges(edge_kl_numb_dir, kl_sqrt.longmatrixNN);
 
         time(&start);
 		KLgraph kl_dist;
-		kl_dist.BuildByDist(kl_size, db, n, d, random_gen, &ll2);
+		kl_dist.BuildByDist(kl_size, db, n, d, random_gen, &cos);
 		time (&end);
 		cout << difftime(end, start) << endl;
         write_edges(edge_kl_dist_dir, kl_dist.longmatrixNN);
@@ -211,11 +211,11 @@ int main(int argc, char **argv) {
     vector< vector <uint32_t>> kl_dist(n);
     kl_dist = load_edges(edge_kl_dist_dir, kl_dist);
 
-	get_synthetic_tests(n, d, n_q, n_tr, random_gen, knn, knn, db, queries, truth, output_txt, &ll2, "knn", false, false, false, false);
-	get_synthetic_tests(n, d, n_q, n_tr, random_gen, knn_by_thr, knn_by_thr, db, queries, truth, output_txt, &ll2, "knn_thr", false, false, false, true);
-	get_synthetic_tests(n, d, n_q, n_tr, random_gen, knn, kl_dist, db, queries, truth, output_txt, &ll2, "knn_kl_dist_llf", true, true, false, false);
-	get_synthetic_tests(n, d, n_q, n_tr, random_gen, knn, kl_numb, db, queries, truth, output_txt, &ll2, "knn_kl_numb_llf", true, true, false, false);
-	get_synthetic_tests(n, d, n_q, n_tr, random_gen, knn, kl_sqrt, db, queries, truth, output_txt, &ll2, "knn_kl_sqrt_llf", true, true, false, false);
+	get_synthetic_tests(n, d, n_q, n_tr, random_gen, knn, knn, db, queries, truth, output_txt, &cos, "knn", false, false, false, false);
+	get_synthetic_tests(n, d, n_q, n_tr, random_gen, knn_by_thr, knn_by_thr, db, queries, truth, output_txt, &cos, "knn_thr", false, false, false, true);
+	get_synthetic_tests(n, d, n_q, n_tr, random_gen, knn, kl_dist, db, queries, truth, output_txt, &cos, "knn_kl_dist_llf", true, true, false, false);
+	get_synthetic_tests(n, d, n_q, n_tr, random_gen, knn, kl_numb, db, queries, truth, output_txt, &cos, "knn_kl_numb_llf", true, true, false, false);
+	get_synthetic_tests(n, d, n_q, n_tr, random_gen, knn, kl_sqrt, db, queries, truth, output_txt, &cos, "knn_kl_sqrt_llf", true, true, false, false);
 
     return 0;
 
