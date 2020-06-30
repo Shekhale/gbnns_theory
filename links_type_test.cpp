@@ -160,7 +160,7 @@ int main(int argc, char **argv) {
         write_edges(edge_knn_dir, knn.matrixNN);
     }
     bool knn_thr_exist = FileExist(dir_knn_thr);
-    if (knn_exist != true) {
+    if (knn_thr_exist != true) {
         time(&start);
         ExactKNN knn_by_thr;
         knn_by_thr.BuildThreshold(knn_thr, db, n, d, &cos);
