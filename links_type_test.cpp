@@ -176,6 +176,7 @@ int main(int argc, char **argv) {
 
     vector< vector <uint32_t>> knn_by_thr(n);
     knn_by_thr = load_edges(edge_knn_thr_dir, knn_by_thr);
+    cout << "knn_by_thr " << FindGraphAverageDegree(knn_by_thr) << endl;
 
     bool kl_exist = FileExist(dir_kl_sqrt);
     if (kl_exist != true) {

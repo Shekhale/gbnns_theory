@@ -276,7 +276,7 @@ void get_synthetic_tests(int n, int d, int n_q, int n_tr, std::mt19937 random_ge
         } else {
             vector<int> k_coeff_{15, 20, 25, 30, 40, 60};
             k_coeff.insert(k_coeff.end(), k_coeff_.begin(), k_coeff_.end());
-            vector<int> thr_coeff_{1.1, 1.15, 1.2, 1.3, 1.4, 1.5};
+            vector<int> thr_coeff_{1.1, 1.15, 1.2, 1.3, 1.4, 2};
             thr_coeff.insert(thr_coeff.end(), thr_coeff_.begin(), thr_coeff_.end());
         }
         hops_bound = 7;
@@ -313,7 +313,7 @@ void get_synthetic_tests(int n, int d, int n_q, int n_tr, std::mt19937 random_ge
         } else if (knn_by_threshold) {
             float thr = asin(thr_coeff[i] * pow(2, 0.5) * pow(n, - 1. / d));
             knn_cur = CutKNNbyThreshold(knn, db, thr, n, d, metric);
-            cout << "threshold" << endl;
+            cout << "threshold " << thr << ", thr_coeff[i] " << thr_coeff[i] << endl;
         } else {
             knn_cur = CutKNNbyK(knn, db, k_coeff[i], n, d, metric);
         }
