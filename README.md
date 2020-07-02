@@ -1,4 +1,4 @@
-# Graph-based Nearest Neighbor Search: From Practice to Theory
+## Graph-based Nearest Neighbor Search: From Practice to Theory
 Code for reproducing synthetic experiments from ICML2020 [paper](https://arxiv.org/abs/1907.00845)
 
 
