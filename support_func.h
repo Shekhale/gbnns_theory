@@ -43,6 +43,20 @@ public:
 };
 
 
+class L2Metric : public Metric {
+public:
+    float Dist(const float *x, const float *y, size_t d) {
+        float res = 0;
+        for (int i = 0; i < d; ++i) {
+            res += pow(*x - *y, 2);
+            ++x;
+            ++y;
+        }
+        return sqrt(res);
+    }
+};
+
+
 class LikeL2Metric : public Metric {
 public:
     float Dist(const float *x, const float *y, size_t d) {

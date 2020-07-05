@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
     const size_t n_tr = 1;
     const size_t d = d_v;  // dimension of data
 
-    LikeL2Metric ll2 = LikeL2Metric();
+    L2Metric l2 = L2Metric();
 
     std::mt19937 random_gen;
     std::random_device device;
@@ -75,7 +75,7 @@ int main(int argc, char **argv) {
         for (int i=0; i < n*d; ++i) {
             db.push_back(data[n_q*d + i]);
         }
-        vector<uint32_t> truth = get_truth(db, queries, n, d, n_q, &ll2);
+        vector<uint32_t> truth = get_truth(db, queries, n, d, n_q, &l2);
 
         std::ofstream data_input_db(database_dir, std::ios::binary);
         writeXvec<float>(data_input_db, db.data(), d, n);
@@ -94,7 +94,7 @@ int main(int argc, char **argv) {
         readXvec<float>(data_input, db.data(), d, n);
     }
 
-    FindDistanceToKNeighbor(n, d, 1, 10000, db, output_txt, &ll2);
+    FindDistanceToKNeighbor(n, d, 1, 10000, db, output_txt, &l2);
 
     return 0;
 
