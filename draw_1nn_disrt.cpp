@@ -106,7 +106,7 @@ int main(int argc, char **argv) {
         readXvec<float>(data_input, db.data(), d, n);
     }
 
-    FindDistanceToKNeighbor(n, d, 1, 10000, db, output_txt, &l2, true);
+    FindDistanceToKNeighbor(n, d, 1, 100, db, output_txt, &l2, true);
 
     return 0;
 

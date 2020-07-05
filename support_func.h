@@ -320,7 +320,12 @@ void FindDistanceToKNeighbor(int n, int d, int k, int distr_size,
 
     std::ofstream outfile;
     outfile.open(output_txt, std::ios_base::app);
-    float norm = metric->Dist(ds.data(), ds.data(), d);
+    float tmp_sum = 0;
+    for (int i=0; i < d; ++i) {
+        tmp_sum += ds[i] * ds[i];
+    }
+    float norm = sqrt(tmp_sum);
+
 #pragma omp parallel for
     for (int i=0; i < distr_size; ++i) {
         priority_queue<float> topResults;
