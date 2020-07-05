@@ -296,3 +296,38 @@ vector< vector<uint32_t> > GraphMerge(vector< vector<uint32_t> > &graph_f, vecto
 
     return union_graph;
 }
+
+
+void FindDistanceToKNeighbor(int n, int d, int k, int distr_size,
+                 vector<float> &ds, const char* output_txt,
+                 Metric *metric) {
+
+    vector<float> distr(distr_size);
+
+    std::ofstream outfile;
+    outfile.open(output_txt, std::ios_base::app);
+#pragma omp parallel for
+    for (int i=0; i < distr_size; ++i) {
+        priority_queue<float> topResults;
+        const float *point_q = ds.data() + i * d;
+        const float *point_can = ds.data() + 0 * d;
+        for (int j = 0; j < n; ++j) {
+            if (i != j) {
+                point_can = ds.data() + j * d;
+                float dist = metric->Dist(point_q, point_can, d);
+                topResults.emplace(dist);
+                if (topResults.size() > k) {
+                    topResults.pop();
+                }
+            }
+        }
+        distr[i] = topResults.top();
+
+
+    }
+
+    for(int i=0; i < distr.size(); ++i) {
+        outfile << distr[i] << ' ';
+    }
+    outfile << endl;
+}
