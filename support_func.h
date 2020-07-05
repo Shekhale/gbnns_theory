@@ -314,12 +314,13 @@ vector< vector<uint32_t> > GraphMerge(vector< vector<uint32_t> > &graph_f, vecto
 
 void FindDistanceToKNeighbor(int n, int d, int k, int distr_size,
                  vector<float> &ds, const char* output_txt,
-                 Metric *metric) {
+                 Metric *metric, bool normalize) {
 
     vector<float> distr(distr_size);
 
     std::ofstream outfile;
     outfile.open(output_txt, std::ios_base::app);
+    float norm = metric->Dist(ds.data(), ds.data(), d);
 #pragma omp parallel for
     for (int i=0; i < distr_size; ++i) {
         priority_queue<float> topResults;
@@ -335,12 +336,16 @@ void FindDistanceToKNeighbor(int n, int d, int k, int distr_size,
                 }
             }
         }
-        distr[i] = topResults.top();
-
+        if (normalize) {
+            distr[i] = topResults.top() / norm;
+        } else {
+            distr[i] = topResults.top();
+        }
 
     }
 
     for(int i=0; i < distr.size(); ++i) {
+
         outfile << distr[i] << ' ';
     }
     outfile << endl;

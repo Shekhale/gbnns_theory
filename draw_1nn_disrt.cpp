@@ -52,22 +52,25 @@ int main(int argc, char **argv) {
 
     string path_data = "data/synthetic/synthetic";
     string path_models = "models/synthetic/";
-    const char *database_dir;
     string dir_d;
     if (synthetic_data) {
         dir_d = path_data + "_database_n_10_6_d_" + to_string(d) + ".fvecs";
-        database_dir = dir_d.c_str();  // path to data
     } else {
         dir_d = "data/sift/sift_base.fvecs";
-        database_dir = dir_d.c_str();  // path to data
-
     }
+    const char *database_dir = dir_d.c_str();  // path to data;
+
     string dir_q = path_data + "_query_n_10_4_d_" + to_string(d) + ".fvecs";
     const char *query_dir = dir_q.c_str();  // path to data
     string dir_t = path_data + "_groundtruth_n_10_4_d_" + to_string(d) + ".ivecs";
     const char *truth_dir = dir_t.c_str();  // path to data
 
-    string output = "results/distr_to_1_d_" + to_string(d) + ".txt";
+    string output;
+    if (synthetic_data) {
+        output = "results/distr_to_1_d_" + to_string(d) + ".txt";
+    } else {
+        output = "results/distr_to_1_sift.txt";
+    }
     const char *output_txt = output.c_str();
 
     remove(output_txt);
@@ -103,7 +106,7 @@ int main(int argc, char **argv) {
         readXvec<float>(data_input, db.data(), d, n);
     }
 
-    FindDistanceToKNeighbor(n, d, 1, 10000, db, output_txt, &l2);
+    FindDistanceToKNeighbor(n, d, 1, 10000, db, output_txt, &l2, true);
 
     return 0;
 
