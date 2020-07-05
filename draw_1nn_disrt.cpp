@@ -29,8 +29,10 @@ using  namespace std;
 int main(int argc, char **argv) {
 
     size_t d_v = 3;
-    if (argc == 2) {
+    bool synthetic_data = true;
+    if (argc == 3) {
         d_v = atoi(argv[1]);
+        synthetic_data = atoi(argv[2]);
     } else {
         cout << " Need to specify parameters" << endl;
         return 1;
@@ -50,9 +52,16 @@ int main(int argc, char **argv) {
 
     string path_data = "data/synthetic/synthetic";
     string path_models = "models/synthetic/";
+    const char *database_dir;
+    string dir_d;
+    if (synthetic_data) {
+        dir_d = path_data + "_database_n_10_6_d_" + to_string(d) + ".fvecs";
+        database_dir = dir_d.c_str();  // path to data
+    } else {
+        dir_d = "data/sift/sift_base.fvecs";
+        database_dir = dir_d.c_str();  // path to data
 
-    string dir_d = path_data + "_database_n_10_6_d_" + to_string(d) + ".fvecs";
-    const char *database_dir = dir_d.c_str();  // path to data
+    }
     string dir_q = path_data + "_query_n_10_4_d_" + to_string(d) + ".fvecs";
     const char *query_dir = dir_q.c_str();  // path to data
     string dir_t = path_data + "_groundtruth_n_10_4_d_" + to_string(d) + ".ivecs";
@@ -64,7 +73,7 @@ int main(int argc, char **argv) {
     remove(output_txt);
 
     bool data_exist = FileExist(dir_d);
-    if (data_exist != true) {
+    if (data_exist != true and synthetic_data) {
         std::cout << "Creating data" << std::endl;
         vector<float> data = create_uniform_data(n_q + n, d, random_gen);
         vector<float> queries;
