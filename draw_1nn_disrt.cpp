@@ -38,6 +38,8 @@ int main(int argc, char **argv) {
 
     time_t start, end;
     const size_t n = 1000000;  // number of points in base set
+    const size_t n_q = 10000;  // number of points in query set
+    const size_t n_tr = 1;
     const size_t d = d_v;  // dimension of data
 
     LikeL2Metric ll2 = LikeL2Metric();
@@ -92,7 +94,7 @@ int main(int argc, char **argv) {
         readXvec<float>(data_input, db.data(), d, n);
     }
 
-    FindDistanceToKNeighbor(n, d, 1, 1000, db, output_txt, &ll2) {
+    FindDistanceToKNeighbor(n, d, 1, 1000, db, output_txt, &ll2);
 
     return 0;
 
